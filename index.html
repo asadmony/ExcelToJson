@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert Microsoft Excel to Json Data</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.8/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="col-md-6 mt-5">
+            <h2 class="border">Convert MS Excel to Json Data</h2>
+            <div class="d-flex">
+                <input class="form-control" type="file" id="xlfile" accept=".xls,.xlsx" >
+                <button class="btn btn-info" id="submit">Convert</button>
+            </div>
+        </div>
+        <hr>
+        <br>
+        <div class="row">
+            <pre id="showjson" ></pre>
+        </div>
+    </div>
+</body>
+<script>
+    let doc;
+    document.getElementById('xlfile').addEventListener("change", (event) => {
+            doc = event.target.files[0];
+        })
+    document.getElementById('submit').addEventListener("click", () =>{
+        if (doc) {
+            let fileReader = new FileReader();
+            fileReader.readAsBinaryString(doc);
+            fileReader.onload = (event) => {
+                let data = event.target.result;
+                let xljson = XLSX.read(data,{type:"binary"})
+                console.log(xljson)
+                xljson.SheetNames.forEach(sheet => {
+                    let row = XLSX.utils.sheet_to_row_object_array(xljson.Sheets[sheet]);
+                    document.getElementById('showjson').innerHTML = JSON.stringify(row, undefined, 4);
+                })
+            }
+        }
+    })
+</script>
+</html>
